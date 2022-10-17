@@ -70,7 +70,7 @@ class DatabaseTreeDataProvider extends \TYPO3\CMS\Core\Tree\TableConfiguration\D
             $this->getNonSelectableLevelList(),
             $level
         ) && !in_array($basicNode->getId(), $this->getItemUnselectableList()));
-        if (!empty($this->nodeSortValues)) {
+        if (!empty($this->nodeSortValues) && array_key_exists($basicNode->getId(), $this->nodeSortValues)) {
             $node->setSortValue($this->nodeSortValues[$basicNode->getId()]);
         }
         $node->setIcon($iconFactory->getIconForRecord($this->tableName, $row, Icon::SIZE_SMALL));
@@ -127,10 +127,12 @@ class DatabaseTreeDataProvider extends \TYPO3\CMS\Core\Tree\TableConfiguration\D
     protected function isSingleCategoryAclActivated(): bool
     {
         $userTsConfig = $GLOBALS['BE_USER']->getTSConfig();
-        if (is_array($userTsConfig['tx_news.'])
-            && $userTsConfig['tx_news.']['singleCategoryAcl'] === '1'
-        ) {
-            return true;
+        if(array_key_exists('tx_news.', $userTsConfig)){
+            if (is_array($userTsConfig['tx_news.'])
+                && $userTsConfig['tx_news.']['singleCategoryAcl'] === '1'
+            ) {
+                return true;
+            }
         }
 
         return false;
